@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion4.0/lib")
+require 'motion/project/template/ios-watch-extension'
+
+begin
+  require 'bundler'
+  Bundler.require
+rescue LoadError
+end
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.frameworks << 'CoreMotion'
+  app.frameworks << 'CoreLocation'
+  app.codesign_certificate = ENV['WILDCARD_CERTIFICATE']
+  app.provisioning_profile = ENV['WILDCARD_PROVISIONING_PROFILE_PATH']
+  app.watch_app_config.codesign_certificate = app.codesign_certificate
+  app.watch_app_config.provisioning_profile = app.provisioning_profile
+  app.info_plist['NSAppTransportSecurity'] = { 'NSAllowsArbitraryLoads' => true }
+  app.vendor_project('vendor/objc', :static)
+end
+
+require 'ib/tasks'
+
+IB::RakeTask.new do |project|
+  project.resource_directories = ['watch_app']
+end
